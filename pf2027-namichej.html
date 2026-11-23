@@ -1,0 +1,657 @@
+<title>Namíchej si PF 2027</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito+Sans:wght@400;600;700&display=swap">
+<style>
+/* Layout: the stage (animals forming the letters) is the hero; the "mixing desk" of choices sits under it in four groups. The palette choice re-themes the whole page. */
+:root {
+  --bg1: #0f1d3a; --bg2: #1d3566;      /* set from the chosen palette */
+  --fg: #eaf2ff; --accent: #9fd3ff;
+  --muted: rgba(234, 242, 255, 0.68);
+  --chip: rgba(234, 242, 255, 0.08);
+  --line: rgba(234, 242, 255, 0.18);
+  --f-head: "Fredoka", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Nunito Sans", "Segoe UI", system-ui, sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--bg1); }
+body {
+  margin: 0; color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.5;
+  background: linear-gradient(170deg, var(--bg2), var(--bg1) 70%) fixed;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 18px 44px;
+  transition: background 0.4s, color 0.4s;
+}
+.wrap { max-width: 1100px; margin: 0 auto; display: grid; gap: 18px; }
+header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: end; gap: 8px 20px; }
+.eyebrow { margin: 0; font-size: 12px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+h1 { margin: 0; font-family: var(--f-head); font-weight: 600; font-size: clamp(26px, 4vw, 40px); line-height: 1.1; text-wrap: balance; }
+h1 span { color: var(--accent); }
+
+.stage {
+  position: relative; width: 100%; max-width: 100%; aspect-ratio: 16 / 9;
+  border-radius: 14px; overflow: hidden; border: 1px solid var(--line);
+  background: radial-gradient(110% 80% at 50% 35%, rgba(255,255,255,0.08), transparent 70%);
+  touch-action: pan-y;
+}
+@media (max-width: 640px) { .stage { aspect-ratio: 4 / 5; } }
+canvas { display: block; width: 100%; height: 100%; }
+
+.desk { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 26px; }
+@media (max-width: 760px) { .desk { grid-template-columns: minmax(0, 1fr); } }
+fieldset { margin: 0; padding: 0; border: 0; min-width: 0; }
+legend { padding: 0; margin-bottom: 8px; font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); font-weight: 700; }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font: inherit; font-size: 15px; font-weight: 600; color: var(--fg); background: var(--chip);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 13px 6px 9px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 7px; transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--bg1); }
+.chip canvas { width: 22px; height: 22px; }
+.chip .sw { width: 18px; height: 18px; border-radius: 50%; display: inline-block; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.35); }
+.chip:focus-visible, .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.btn {
+  font: inherit; font-family: var(--f-head); font-weight: 600; font-size: 17px; cursor: pointer;
+  color: var(--bg1); background: var(--accent); border: 0; border-radius: 999px; padding: 10px 22px;
+}
+.btn.ghost { background: transparent; color: var(--fg); border: 1px solid var(--line); font-size: 15px; padding: 9px 16px; }
+.share { display: none; width: 100%; gap: 8px; align-items: center; flex-wrap: wrap; }
+.share.on { display: flex; }
+.share input { flex: 1 1 260px; min-width: 0; font: inherit; font-size: 14px; color: var(--fg); background: var(--chip); border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; }
+.note { margin: 0; font-size: 13px; color: var(--muted); }
+</style>
+
+<div class="wrap">
+  <header>
+    <div>
+      <p class="eyebrow">PF 2027 · přeje VYCHO</p>
+      <h1>Namíchej si <span>PF 2027</span></h1>
+    </div>
+    <p class="note">Najeď na zvířátka myší nebo prstem.</p>
+  </header>
+
+  <div class="stage" id="stage">
+    <canvas id="cv" aria-label="Zvířátka se seběhnou a poskládají do nápisu PF 2027, pod ním přeje VYCHO"></canvas>
+  </div>
+
+  <div class="desk">
+    <fieldset>
+      <legend>Zvířátka</legend>
+      <div class="chips" id="animals"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Barvy</legend>
+      <div class="chips" id="palettes"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Jak přijdou</legend>
+      <div class="chips" id="moves"></div>
+    </fieldset>
+    <fieldset>
+      <legend>Hudba</legend>
+      <div class="chips" id="musics"></div>
+    </fieldset>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="build">Sestavit PF</button>
+    <button class="btn ghost" id="mute" aria-pressed="false">Ztlumit hudbu</button>
+    <button class="btn ghost" id="shareBtn">Poslat tuhle verzi</button>
+    <div class="share" id="share">
+      <input id="shareUrl" readonly aria-label="Odkaz na tuhle verzi">
+      <span class="note" id="shareNote">Odkaz je zkopírovaný.</span>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const TAU = Math.PI * 2;
+
+  // ---------------- choices ----------------
+  const ANIMALS = { tucnak: 'Tučňáci', liska: 'Lišky', sova: 'Sovy', kocka: 'Kočky', slepice: 'Slepice', mix: 'Všichni' };
+  const PALETTES = {
+    zima:   { label: 'Zimní',     bg1: '#0f1d3a', bg2: '#21407a', fg: '#eaf2ff', accent: '#9fd3ff', dark: true },
+    vanoce: { label: 'Vánoční',   bg1: '#0e2a20', bg2: '#1d5039', fg: '#fff3e0', accent: '#ef5a5f', dark: true },
+    zlata:  { label: 'Zlatá',     bg1: '#17130e', bg2: '#33291a', fg: '#f8edd8', accent: '#e9b949', dark: true },
+    pastel: { label: 'Pastelová', bg1: '#f6eef8', bg2: '#fde6ee', fg: '#3a2d4a', accent: '#b8508a', dark: false }
+  };
+  const MOVES = { snih: 'Snesou se jako sníh', beh: 'Přiběhnou', spirala: 'Přiletí po spirále', skok: 'Přiskáčou' };
+  const MUSICS = { koledy: 'Koleda', pop: 'Pop', rock: 'Rock', bit: '8bit' };
+  const state = { animal: 'tucnak', palette: 'zima', move: 'beh', music: 'koledy' };
+  (function fromHash() {
+    const parts = location.hash.replace('#', '').toLowerCase().split('-');
+    if (parts.length === 4 && ANIMALS[parts[0]] && PALETTES[parts[1]] && MOVES[parts[2]] && MUSICS[parts[3]])
+      Object.assign(state, { animal: parts[0], palette: parts[1], move: parts[2], music: parts[3] });
+  })();
+
+  // ---------------- animal sprites (own simple drawings) ----------------
+  function drawAnimal(c, kind, r) {
+    const p = (fill, f) => { c.fillStyle = fill; c.beginPath(); f(); c.fill(); };
+    const ell = (x, y, rx, ry) => c.ellipse(x * r, y * r, rx * r, ry * r, 0, 0, TAU);
+    const poly = pts => { c.moveTo(pts[0][0] * r, pts[0][1] * r); pts.slice(1).forEach(q => c.lineTo(q[0] * r, q[1] * r)); c.closePath(); };
+    if (kind === 'tucnak') {
+      p('#ff9f1c', () => { ell(-0.3, 0.92, 0.25, 0.1); }); p('#ff9f1c', () => { ell(0.3, 0.92, 0.25, 0.1); });
+      p('#1c2333', () => ell(0, 0.05, 0.72, 0.92));
+      p('#ffffff', () => ell(0, 0.22, 0.47, 0.66));
+      p('#ffffff', () => { ell(-0.22, -0.45, 0.14, 0.15); }); p('#ffffff', () => ell(0.22, -0.45, 0.14, 0.15));
+      p('#1c2333', () => { ell(-0.19, -0.44, 0.07, 0.08); }); p('#1c2333', () => ell(0.19, -0.44, 0.07, 0.08));
+      p('#ff9f1c', () => poly([[-0.15, -0.28], [0.15, -0.28], [0, -0.1]]));
+    } else if (kind === 'liska') {
+      p('#e8742a', () => poly([[-0.92, -0.95], [-0.25, -0.5], [-0.75, -0.2]])); p('#e8742a', () => poly([[0.92, -0.95], [0.25, -0.5], [0.75, -0.2]]));
+      p('#5a2a10', () => poly([[-0.78, -0.72], [-0.42, -0.5], [-0.7, -0.35]])); p('#5a2a10', () => poly([[0.78, -0.72], [0.42, -0.5], [0.7, -0.35]]));
+      p('#e8742a', () => poly([[-0.95, -0.35], [-0.5, -0.6], [0.5, -0.6], [0.95, -0.35], [0, 0.9]]));
+      p('#fff4e6', () => poly([[-0.95, -0.35], [-0.15, 0.15], [0, 0.9]])); p('#fff4e6', () => poly([[0.95, -0.35], [0.15, 0.15], [0, 0.9]]));
+      p('#1b1b1b', () => ell(0, 0.78, 0.13, 0.1));
+      p('#1b1b1b', () => { ell(-0.33, -0.18, 0.08, 0.11); }); p('#1b1b1b', () => ell(0.33, -0.18, 0.08, 0.11));
+    } else if (kind === 'sova') {
+      p('#8a5a3b', () => poly([[-0.7, -0.6], [-0.55, -1.0], [-0.25, -0.75]])); p('#8a5a3b', () => poly([[0.7, -0.6], [0.55, -1.0], [0.25, -0.75]]));
+      p('#8a5a3b', () => ell(0, 0.08, 0.78, 0.9));
+      p('#c99a6b', () => ell(0, 0.42, 0.5, 0.48));
+      p('#efdcbc', () => { ell(-0.32, -0.3, 0.32, 0.32); }); p('#efdcbc', () => ell(0.32, -0.3, 0.32, 0.32));
+      p('#1b1b1b', () => { ell(-0.32, -0.3, 0.16, 0.16); }); p('#1b1b1b', () => ell(0.32, -0.3, 0.16, 0.16));
+      p('#ffffff', () => { ell(-0.27, -0.35, 0.05, 0.05); }); p('#ffffff', () => ell(0.37, -0.35, 0.05, 0.05));
+      p('#f2a33a', () => poly([[-0.1, -0.08], [0.1, -0.08], [0, 0.14]]));
+    } else if (kind === 'kocka') {
+      p('#6f7584', () => poly([[-0.85, -0.95], [-0.25, -0.55], [-0.8, -0.2]])); p('#6f7584', () => poly([[0.85, -0.95], [0.25, -0.55], [0.8, -0.2]]));
+      p('#f2a7b8', () => poly([[-0.73, -0.72], [-0.4, -0.52], [-0.7, -0.35]])); p('#f2a7b8', () => poly([[0.73, -0.72], [0.4, -0.52], [0.7, -0.35]]));
+      p('#6f7584', () => ell(0, 0.08, 0.86, 0.78));
+      p('#d7e85a', () => { ell(-0.32, -0.08, 0.15, 0.17); }); p('#d7e85a', () => ell(0.32, -0.08, 0.15, 0.17));
+      p('#1b1b1b', () => { ell(-0.32, -0.08, 0.05, 0.14); }); p('#1b1b1b', () => ell(0.32, -0.08, 0.05, 0.14));
+      p('#f28aa0', () => poly([[-0.1, 0.2], [0.1, 0.2], [0, 0.32]]));
+      c.strokeStyle = 'rgba(255,255,255,0.85)'; c.lineWidth = Math.max(0.6, r * 0.06);
+      [[-1, 0.3], [-1, 0.45], [1, 0.3], [1, 0.45]].forEach(([sx, y]) => { c.beginPath(); c.moveTo(sx * 0.2 * r, y * r); c.lineTo(sx * 0.95 * r, (y - 0.05) * r); c.stroke(); });
+    } else if (kind === 'slepice' || kind === 'zlata') {
+      const Z = kind === 'zlata', body = Z ? '#f4c430' : '#f5efe0', wing = Z ? '#d49b12' : '#e6dcc4';
+      c.strokeStyle = '#f2a33a'; c.lineWidth = Math.max(0.8, r * 0.09);
+      [[-0.2], [0.15]].forEach(([x]) => { c.beginPath(); c.moveTo(x * r, 0.7 * r); c.lineTo(x * r, 0.98 * r); c.stroke(); });
+      p(body, () => poly([[-0.95, -0.35], [-0.6, 0.05], [-0.9, 0.25]]));
+      p(body, () => ell(-0.1, 0.25, 0.75, 0.55));
+      p(body, () => ell(0.35, -0.42, 0.36, 0.36));
+      p('#d8332e', () => { ell(0.22, -0.82, 0.11, 0.12); ell(0.37, -0.86, 0.12, 0.13); ell(0.52, -0.8, 0.11, 0.12); });
+      p('#f2a33a', () => poly([[0.68, -0.48], [0.95, -0.4], [0.68, -0.3]]));
+      p('#d8332e', () => ell(0.62, -0.18, 0.08, 0.13));
+      p('#1b1b1b', () => ell(0.43, -0.5, 0.06, 0.07));
+      p(wing, () => ell(-0.25, 0.25, 0.38, 0.25));
+      if (Z) { c.fillStyle = 'rgba(255,255,255,0.85)'; [[-0.55, -0.7], [0.75, 0.55], [-0.85, 0.65]].forEach(([x, y]) => { c.beginPath(); c.arc(x * r, y * r, r * 0.08, 0, TAU); c.fill(); }); }
+    }
+  }
+  const KINDS = ['tucnak', 'liska', 'sova', 'kocka', 'slepice'];
+  const sprites = {};
+  function makeSprites(px) {
+    for (const k of KINDS.concat('zlata')) {
+      const c = document.createElement('canvas'); c.width = c.height = Math.ceil(px * 2.2);
+      const g = c.getContext('2d'); g.translate(c.width / 2, c.height / 2); drawAnimal(g, k, px);
+      sprites[k] = c;
+    }
+  }
+
+  // ---------------- UI ----------------
+  function chip(group, key, html, pressed) {
+    const b = document.createElement('button'); b.type = 'button'; b.className = 'chip'; b.id = `${group}-${key}`;
+    b.dataset.key = key; b.innerHTML = html; b.setAttribute('aria-pressed', String(pressed)); return b;
+  }
+  for (const [k, v] of Object.entries(ANIMALS)) {
+    const b = chip('an', k, `<canvas width="44" height="44" aria-hidden="true"></canvas>${v}`, state.animal === k);
+    const g = b.querySelector('canvas').getContext('2d'); g.translate(22, 23);
+    if (k === 'mix') { g.scale(0.55, 0.55); [[-18, -14, 'tucnak'], [18, -14, 'liska'], [-18, 18, 'slepice'], [18, 18, 'sova']].forEach(([x, y, kk]) => { g.save(); g.translate(x, y); drawAnimal(g, kk, 16); g.restore(); }); }
+    else drawAnimal(g, k, 19);
+    $('animals').append(b);
+  }
+  for (const [k, v] of Object.entries(PALETTES)) $('palettes').append(chip('pal', k, `<span class="sw" style="background:linear-gradient(135deg, ${v.bg2}, ${v.accent})"></span>${v.label}`, state.palette === k));
+  for (const [k, v] of Object.entries(MOVES)) $('moves').append(chip('mv', k, v, state.move === k));
+  for (const [k, v] of Object.entries(MUSICS)) $('musics').append(chip('mu', k, v, state.music === k));
+  function single(el, onPick) {
+    el.addEventListener('click', e => {
+      const b = e.target.closest('.chip'); if (!b) return;
+      el.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === b)));
+      onPick(b.dataset.key);
+    });
+  }
+  single($('animals'), k => { state.animal = k; if (built) assemble(); });
+  single($('palettes'), k => { state.palette = k; applyPalette(); });
+  single($('moves'), k => { state.move = k; if (built) assemble(); });
+  single($('musics'), k => { state.music = k; if (music.playing) music.start(k); });
+  $('build').addEventListener('click', () => { built = true; music.ensure(); assemble(); });
+  $('mute').addEventListener('click', e => {
+    const b = e.currentTarget, on = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', String(on)); b.textContent = on ? 'Zapnout hudbu' : 'Ztlumit hudbu'; music.setMuted(on);
+  });
+  $('shareBtn').addEventListener('click', () => {
+    const url = location.href.split('#')[0] + '#' + [state.animal, state.palette, state.move, state.music].join('-');
+    const box = $('share'), inp = $('shareUrl'); inp.value = url; box.classList.add('on');
+    try {
+      navigator.clipboard.writeText(url).then(() => { $('shareNote').textContent = 'Odkaz je zkopírovaný.'; },
+        () => { inp.select(); $('shareNote').textContent = 'Zkopíruj si odkaz (Ctrl+C).'; });
+    } catch (err) { inp.select(); $('shareNote').textContent = 'Zkopíruj si odkaz (Ctrl+C).'; }
+  });
+
+  function applyPalette() {
+    const p = PALETTES[state.palette], r = document.documentElement.style;
+    r.setProperty('--bg1', p.bg1); r.setProperty('--bg2', p.bg2); r.setProperty('--fg', p.fg); r.setProperty('--accent', p.accent);
+    const hex = p.fg.replace('#', ''), n = parseInt(hex, 16), rgb = `${n >> 16}, ${(n >> 8) & 255}, ${n & 255}`;
+    r.setProperty('--muted', `rgba(${rgb}, 0.68)`); r.setProperty('--chip', `rgba(${rgb}, 0.08)`); r.setProperty('--line', `rgba(${rgb}, 0.2)`);
+    r.setProperty('color-scheme', p.dark ? 'dark' : 'light');
+    tintMask();
+  }
+
+  // ---------------- stage ----------------
+  const stage = $('stage'), cv = $('cv'), ctx = cv.getContext('2d');
+  let W = 0, H = 0, dpr = 1, S = 12, parts = [], t0 = 0, signAt = 0, built = false, mask = null;
+  function tintMask() {
+    if (!mask) return;
+    const g = mask.getContext('2d'); g.globalCompositeOperation = 'source-in';
+    g.fillStyle = PALETTES[state.palette].accent; g.fillRect(0, 0, mask.width, mask.height);
+  }
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function resize() {
+    const r = stage.getBoundingClientRect(); dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = r.width; H = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    S = Math.max(9, Math.min(18, W / 54));
+    makeSprites(S * dpr);
+  }
+  function targets() {
+    const oc = document.createElement('canvas'); oc.width = Math.round(W); oc.height = Math.round(H);
+    const g = oc.getContext('2d');
+    const portrait = W < H * 0.95;
+    const LINES = portrait ? ['PF', '2027'] : ['PF 2027'], GAP = 0.09;   // extra space between letters (in em)
+    let fs = portrait ? H * 0.3 : H * 0.42;
+    const setF = () => { g.font = `700 ${fs}px "Fredoka", "Arial Black", sans-serif`; };
+    const widthOf = t => [...t].reduce((s, ch) => s + g.measureText(ch).width, 0) + GAP * fs * (t.length - 1);
+    setF(); fs *= Math.min(1, ...LINES.map(t => (W * 0.88) / widthOf(t))); setF();
+    g.textAlign = 'left'; g.textBaseline = 'middle'; g.fillStyle = '#000';
+    const ys = portrait ? [H * 0.42 - fs * 0.55, H * 0.42 + fs * 0.55] : [H * 0.42];
+    LINES.forEach((t, li) => { let lx = (W - widthOf(t)) / 2; for (const ch of t) { g.fillText(ch, lx, ys[li]); lx += g.measureText(ch).width + GAP * fs; } });
+    const d = g.getImageData(0, 0, oc.width, oc.height).data, pts = [], step = S * 1.45;
+    for (let y = 0; y < oc.height; y += step) for (let x = ((y / step) % 2) * step / 2; x < oc.width; x += step) {
+      if (d[(Math.floor(y) * oc.width + Math.floor(x)) * 4 + 3] > 128) pts.push([x, y]);
+    }
+    return { pts, baseY: ys[ys.length - 1] + fs * 0.5, oc };
+  }
+  let signY = 0;
+  function assemble() {
+    const { pts, baseY, oc } = targets(); signY = baseY; mask = oc; tintMask();
+    const rnd = (a, b) => a + Math.random() * (b - a);
+    parts = pts.map(([tx, ty], i) => {
+      const kind = state.animal === 'mix' ? KINDS[i % KINDS.length] : state.animal;
+      let sx, sy;
+      if (state.move === 'snih') { sx = tx + rnd(-120, 120); sy = rnd(-H, -20); }
+      else if (state.move === 'beh') { sx = Math.random() < 0.5 ? rnd(-260, -30) : W + rnd(30, 260); sy = ty + rnd(-30, 30); }
+      else if (state.move === 'spirala') { sx = W / 2; sy = H * 0.42; }
+      else { sx = tx + rnd(-200, 200); sy = H + rnd(30, 160); }
+      const delay = state.move === 'snih' ? rnd(0, 1.6) : state.move === 'spirala' ? (i / pts.length) * 1.4 : state.move === 'beh' ? rnd(0, 1.2) : (tx / W) * 1.2 + rnd(0, 0.3);
+      return { kind, tx, ty, sx, sy, delay, dur: rnd(1.6, 2.4), ph: Math.random() * TAU, ox: 0, oy: 0, flip: sx > tx ? -1 : 1 };
+    });
+    t0 = performance.now(); signAt = reduce ? 0 : 3.4;
+  }
+  const ease = x => 1 - Math.pow(1 - x, 3);
+
+  let pointer = null;
+  stage.addEventListener('pointermove', e => { const r = stage.getBoundingClientRect(); pointer = { x: e.clientX - r.left, y: e.clientY - r.top }; });
+  stage.addEventListener('pointerleave', () => { pointer = null; });
+
+  // ---------------- easter eggs ----------------
+  let dizzyUntil = 0, waveAt = -1, egg = null, confetti = [];
+  // 1) circle the mouse fast → the animals get dizzy
+  let lastPt = null, lastAng = null, turn = 0;
+  stage.addEventListener('pointermove', e => {
+    const pt = [e.clientX, e.clientY];
+    if (lastPt) {
+      const dx = pt[0] - lastPt[0], dy = pt[1] - lastPt[1];
+      if (Math.hypot(dx, dy) > 5) {
+        const a = Math.atan2(dy, dx);
+        if (lastAng !== null) { let d = a - lastAng; while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU; turn = turn * 0.985 + d; }
+        lastAng = a; lastPt = pt;
+        if (Math.abs(turn) > 4 * Math.PI && built) { dizzyUntil = performance.now() + 2600; turn = 0; }
+      }
+    } else lastPt = pt;
+  });
+  // 2) click the same animal 7× → golden hen with a lucky egg
+  let clickP = null, clicks = 0;
+  stage.addEventListener('click', e => {
+    const r = stage.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
+    const half = sprites.tucnak ? sprites.tucnak.width / dpr / 2 : S;
+    let best = null, bd = half * 1.6;   // use the animal's home spot: it dodges the cursor
+    for (const p of parts) { if (p.bx === undefined) continue; const d = Math.hypot(p.bx - x, p.by - y); if (d < bd) { bd = d; best = p; } }
+    if (!best) return;
+    clicks = best === clickP ? clicks + 1 : 1; clickP = best;
+    if (clicks >= 7 && best.kind !== 'zlata') { best.kind = 'zlata'; egg = { x: best.cx, y: best.cy, t0: performance.now() }; clicks = 0; }
+  });
+  // 3) type VYCHO → wave + confetti
+  let keys = '';
+  window.addEventListener('keydown', e => {
+    if (e.target.closest && e.target.closest('input')) return;
+    if (!/^[a-zA-Z]$/.test(e.key)) return;
+    keys = (keys + e.key.toLowerCase()).slice(-8);
+    if (keys.endsWith('vycho')) {
+      if (!built) { built = true; assemble(); }
+      waveAt = performance.now();
+      const pal = PALETTES[state.palette], cols = [pal.accent, pal.fg, '#f4c430', '#ef5a5f', '#5fcf80'];
+      for (let i = 0; i < 180; i++) confetti.push({ x: Math.random() * W, y: -Math.random() * H * 0.6, vx: (Math.random() - 0.5) * 2, vy: Math.random() * 2, s: 3 + Math.random() * 4, rot: Math.random() * TAU, vr: (Math.random() - 0.5) * 0.3, col: cols[i % cols.length] });
+    }
+  });
+  stage.addEventListener('pointerdown', e => { const r = stage.getBoundingClientRect(); pointer = { x: e.clientX - r.left, y: e.clientY - r.top }; music.ensure(); });
+
+  function frame(now) {
+    const el = (now - t0) / 1000;
+    ctx.clearRect(0, 0, W, H);
+    // a few drifting snowflakes in the background
+    ctx.fillStyle = PALETTES[state.palette].dark ? 'rgba(255,255,255,0.35)' : 'rgba(120,80,140,0.18)';
+    for (let i = 0; i < 40; i++) {
+      const x = (i * 97.3 + now * 0.012 * (1 + (i % 3))) % W, y = (i * 53.7 + now * 0.02 * (1 + (i % 4))) % H;
+      ctx.beginPath(); ctx.arc(x, y, 1 + (i % 3) * 0.6, 0, TAU); ctx.fill();
+    }
+    if (!built) {
+      const pal = PALETTES[state.palette], fs = Math.max(17, Math.min(W / 26, 30));
+      ctx.save(); ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillStyle = pal.fg; ctx.globalAlpha = 0.85;
+      ctx.font = `600 ${fs}px "Fredoka", sans-serif`;
+      ctx.fillText('Vyber si zvířátka, barvy a hudbu', W / 2, H / 2 - fs * 0.8);
+      ctx.globalAlpha = 0.6; ctx.font = `500 ${fs * 0.75}px "Fredoka", sans-serif`;
+      ctx.fillText('a klikni na „Sestavit PF“', W / 2, H / 2 + fs * 0.5);
+      ctx.restore();
+    }
+    if (built && mask) {   // soft letter shapes under the animals, for legibility
+      ctx.save(); ctx.globalAlpha = (PALETTES[state.palette].dark ? 0.2 : 0.16) * (reduce ? 1 : Math.min(1, Math.max(0, (el - 1.2) / 2.2)));
+      ctx.drawImage(mask, 0, 0, W, H); ctx.restore();
+    }
+    const half = sprites.tucnak ? sprites.tucnak.width / dpr / 2 : S;
+    for (const p of parts) {
+      let u = reduce ? 1 : Math.min(1, Math.max(0, (el - p.delay) / p.dur));
+      const e = ease(u); let x, y;
+      if (state.move === 'spirala') {
+        const th = (1 - e) * 3 * Math.PI, k = 1 - e, dx = p.sx - p.tx, dy = p.sy - p.ty;
+        x = p.tx + (dx * Math.cos(th) - dy * Math.sin(th)) * k; y = p.ty + (dx * Math.sin(th) + dy * Math.cos(th)) * k;
+      } else {
+        x = p.sx + (p.tx - p.sx) * e; y = p.sy + (p.ty - p.sy) * e;
+        if (state.move === 'snih') x += Math.sin(el * 2 + p.ph) * 18 * (1 - e);
+        if (state.move === 'beh') y -= Math.abs(Math.sin(u * 14 + p.ph)) * 7 * (1 - e);
+        if (state.move === 'skok') y -= Math.abs(Math.sin(u * Math.PI * 3)) * 70 * (1 - e);
+      }
+      // idle once arrived
+      if (u >= 1) y += Math.sin(el * (state.move === 'skok' ? 5 : 2.2) + p.ph) * (state.move === 'skok' ? 2.4 : 1.2);
+      // easter eggs: wave after typing VYCHO, dizziness after circling the mouse
+      if (waveAt > 0) { const wt = (now - waveAt) / 1000; if (wt < 3) y -= Math.max(0, Math.sin(wt * 7 - (p.tx / W) * 9)) * 26 * Math.min(1, 3 - wt); }
+      const dizzy = now < dizzyUntil;
+      if (dizzy) { x += Math.sin(now / 90 + p.ph) * 6; y += Math.cos(now / 110 + p.ph) * 4; }
+      // pointer push
+      let dx = 0, dy = 0;
+      if (pointer) { const ex = x - pointer.x, ey = y - pointer.y, d2 = ex * ex + ey * ey, R = 80; if (d2 < R * R) { const d = Math.sqrt(d2) || 1, f = (1 - d / R) * 46; dx = ex / d * f; dy = ey / d * f; } }
+      p.ox += (dx - p.ox) * 0.15; p.oy += (dy - p.oy) * 0.15;
+      const spr = sprites[p.kind]; if (!spr) continue;
+      let tilt = u < 1 ? Math.sin(el * 10 + p.ph) * 0.15 : Math.sin(el * 1.5 + p.ph) * 0.05;
+      if (dizzy) tilt = (now / 110 + p.ph) % TAU;
+      ctx.save(); ctx.translate(x + p.ox, y + p.oy); ctx.rotate(tilt); if (u < 1 && state.move === 'beh') ctx.scale(p.flip, 1);
+      ctx.drawImage(spr, -half, -half, half * 2, half * 2); ctx.restore();
+      p.cx = x + p.ox; p.cy = y + p.oy; p.bx = x; p.by = y;
+    }
+    // golden egg
+    if (egg) {
+      const et = (now - egg.t0) / 1000;
+      if (et > 5) egg = null; else {
+        const ey = egg.y + half + Math.min(1, et / 0.6) * 34, fs = Math.max(14, Math.min(20, W / 45));
+        ctx.save(); ctx.fillStyle = '#ffe9a8'; ctx.strokeStyle = '#c99312'; ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.ellipse(egg.x, ey, half * 0.55, half * 0.72, 0, 0, TAU); ctx.fill(); ctx.stroke();
+        const msg = 'Zlaté vajíčko štěstí na rok 2027!';
+        ctx.font = `600 ${fs}px "Fredoka", sans-serif`; const mw = ctx.measureText(msg).width + 20;
+        const bx = Math.max(8, Math.min(W - mw - 8, egg.x - mw / 2)), by = Math.max(8, egg.y - half - fs * 2.6);
+        ctx.globalAlpha = Math.min(1, et * 3, 5 - et); ctx.fillStyle = '#fff8e1';
+        ctx.beginPath(); ctx.roundRect ? ctx.roundRect(bx, by, mw, fs * 1.9, 10) : ctx.rect(bx, by, mw, fs * 1.9); ctx.fill();
+        ctx.fillStyle = '#7a5300'; ctx.textBaseline = 'middle'; ctx.fillText(msg, bx + 10, by + fs * 0.95);
+        ctx.restore();
+      }
+    }
+    // confetti
+    for (let i = confetti.length - 1; i >= 0; i--) {
+      const c = confetti[i]; c.vy += 0.06; c.x += c.vx; c.y += c.vy; c.rot += c.vr;
+      if (c.y > H + 20) { confetti.splice(i, 1); continue; }
+      ctx.save(); ctx.translate(c.x, c.y); ctx.rotate(c.rot); ctx.fillStyle = c.col; ctx.fillRect(-c.s, -c.s * 0.4, c.s * 2, c.s * 0.8); ctx.restore();
+    }
+    // signature
+    const sp = reduce ? 1 : Math.min(1, Math.max(0, (el - signAt) / 0.9));
+    if (built && sp > 0) {
+      const pal = PALETTES[state.palette], fs = Math.max(18, Math.min(W, H * 1.6) * 0.05);
+      ctx.save(); ctx.globalAlpha = sp; ctx.textBaseline = 'alphabetic';
+      ctx.font = `600 ${fs}px "Fredoka", sans-serif`; const wA = ctx.measureText('přeje ').width;
+      ctx.font = `700 ${fs * 1.35}px "Fredoka", sans-serif`; const wB = ctx.measureText('VYCHO').width;
+      const x0 = (W - wA - wB) / 2, y = Math.min(H - fs * 0.8, signY + fs * 1.9) + (1 - sp) * 10;
+      ctx.font = `600 ${fs}px "Fredoka", sans-serif`; ctx.fillStyle = pal.fg; ctx.fillText('přeje ', x0, y);
+      ctx.font = `700 ${fs * 1.35}px "Fredoka", sans-serif`; ctx.fillStyle = pal.accent; ctx.fillText('VYCHO', x0 + wA, y);
+      ctx.restore();
+    }
+    requestAnimationFrame(frame);
+  }
+
+  // ---------------- music (generated in the browser) ----------------
+  // Each style is a 16-bar song in 4 sections (verse, verse 2, chorus, bridge) with its own melody,
+  // so nothing repeats until the whole song loops (roughly 25–40 s).
+  const music = (() => {
+    let ac = null, master = null, comp = null, timer = null, genre = null, nextT = 0, step = 0, dist = null, leadDist = null;
+    const muted = { v: false };
+    const f = m => 440 * Math.pow(2, (m - 69) / 12);
+    const TRI = { G: [55, 59, 62], D: [50, 54, 57], Em: [52, 55, 59], C: [48, 52, 55], Am: [57, 60, 64], Bm: [47, 50, 54], A: [45, 49, 52], F: [53, 57, 60], Dm: [50, 53, 57], E: [52, 56, 59], Bb: [46, 50, 53] };
+    const SONGS = {
+      kytara: { bpm: 108, sec: [['G', 'D', 'Em', 'C'], ['G', 'C', 'D', 'G'], ['Em', 'C', 'G', 'D'], ['C', 'D', 'G', 'G']],
+                scale: [67, 69, 71, 74, 76, 79], seed: 11 },
+      pop:    { bpm: 118, sec: [['G', 'D', 'Em', 'C'], ['Em', 'C', 'G', 'D'], ['C', 'D', 'Bm', 'Em'], ['C', 'D', 'G', 'G']],
+                scale: [67, 69, 71, 74, 76, 79, 81], seed: 23 },
+      bit:    { bpm: 152, sec: [['C', 'Am', 'F', 'G'], ['C', 'Am', 'Dm', 'G'], ['F', 'G', 'Em', 'Am'], ['F', 'G', 'C', 'C']],
+                scale: [72, 74, 76, 79, 81, 84, 86], seed: 37 },
+      // rock: power chords, root notes in MIDI (E2 = 40)
+      rock:   { bpm: 156, sec: [[40, 40, 48, 50], [40, 40, 43, 45], [48, 50, 40, 40], [45, 48, 50, 47]],
+                scale: [64, 67, 69, 71, 74, 76, 79], seed: 5 }
+    };
+
+    // Tichá noc (Franz Xaver Gruber, 1818 – volné dílo), noty v osminách 6/8
+    const KOLEDA = [[67,3],[69,1],[67,2],[64,6],[67,3],[69,1],[67,2],[64,6],[74,4],[74,2],[71,6],[72,4],[72,2],[67,6],
+      [69,4],[69,2],[72,3],[71,1],[69,2],[67,3],[69,1],[67,2],[64,6],[69,4],[69,2],[72,3],[71,1],[69,2],[67,3],[69,1],[67,2],[64,6],
+      [74,4],[74,2],[77,3],[74,1],[71,2],[72,6],[76,6],[72,3],[67,1],[64,2],[67,3],[65,1],[62,2],[60,12],[null,6]];
+    const KOL_EV = {}; { let pos = 0; for (const [n, d] of KOLEDA) { if (n) KOL_EV[pos] = [n, d]; pos += d; } }
+    const KOL_LEN = KOLEDA.reduce((s, x) => s + x[1], 0);
+    const KOL_CH = ['C','C','G','C','F','C','F','C','G','C','C','C'];
+    const PADS = { C: [60, 64, 67], G: [59, 62, 67], F: [60, 65, 69] }, BASS = { C: 48, G: 43, F: 41 };
+    const KOL_Q = 0.33;
+    function bell(m, t, len) {
+      [[1, 0.16], [2, 0.05], [3, 0.025]].forEach(([h, a]) => osc('sine', f(m) * h, t, 0.004, 1.4 / h, a));
+      osc('triangle', f(m), t, 0.03, len * 0.95, 0.05);
+    }
+    function schedKoleda(t, s) {
+      const e = s % KOL_LEN, bar = Math.floor(e / 6), line = Math.floor(e / 12);
+      const ev = KOL_EV[e]; if (ev) bell(ev[0], t, ev[1] * KOL_Q);
+      let ch = KOL_CH[Math.min(line, 11)]; if (bar === 21) ch = 'G';
+      if (e % 12 === 0 && e < 144) PADS[ch].forEach(m => [-5, 5].forEach(dt => osc('triangle', f(m), t, 0.35, KOL_Q * 11, 0.035, null, dt)));
+      if (e % 6 === 0 && e < 144) osc('sine', f(BASS[ch]), t, 0.01, KOL_Q * 5, 0.22);
+      if (e % 3 === 0) noise(t, 0.09, 0.05, 'highpass', 7500);
+      if (Math.random() < 0.08) noise(t + KOL_Q / 2, 0.06, 0.03, 'highpass', 9000);
+    }
+    // deterministic "composer": a seeded melody per song, different in every bar
+    function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+    const RHYTHMS = [
+      [1,0,0,0, 1,0,1,0, 1,0,0,0, 1,0,0,0], [1,0,1,0, 1,0,0,1, 0,0,1,0, 1,0,0,0],
+      [1,0,0,1, 0,0,1,0, 1,0,1,0, 0,0,0,0], [1,0,1,1, 1,0,1,0, 1,1,1,0, 1,0,0,0],
+      [0,0,1,0, 1,0,1,0, 0,0,1,0, 1,0,1,0], [1,0,0,0, 0,0,0,0, 1,0,1,0, 1,0,0,0]
+    ];
+    const melodies = {};
+    function compose(g) {
+      const S = SONGS[g], r = rng(S.seed), out = [];
+      let idx = 2;
+      for (let s = 0; s < 4; s++) {
+        const motif = [RHYTHMS[Math.floor(r() * RHYTHMS.length)], RHYTHMS[Math.floor(r() * RHYTHMS.length)]];
+        for (let b = 0; b < 4; b++) {
+          const rhythm = b === 3 ? RHYTHMS[5] : motif[b % 2];
+          const bar = [];
+          for (let k = 0; k < 16; k++) {
+            if (!rhythm[k]) { bar.push(null); continue; }
+            idx = Math.max(0, Math.min(S.scale.length - 1, idx + [-2, -1, -1, 0, 1, 1, 2][Math.floor(r() * 7)]));
+            if (b === 3 && k === 8) idx = 0;                         // land on the tonic at section ends
+            bar.push(S.scale[idx] + (s === 2 ? 12 : 0) * (g === 'pop' ? 1 : 0));
+          }
+          out.push(bar);
+        }
+      }
+      return out;
+    }
+
+    function ensure() {
+      if (!ac) {
+        const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+        ac = new AC();
+        comp = ac.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 4;
+        master = ac.createGain(); master.gain.value = muted.v ? 0 : 0.7;
+        comp.connect(master); master.connect(ac.destination);
+      }
+      if (ac.state === 'suspended') ac.resume();
+      if (!timer) start(state.music);
+    }
+    function envTo(node, t, a, d, peak, dest) {
+      const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d);
+      node.connect(g); g.connect(dest || comp); return g;
+    }
+    function osc(type, freq, t, a, d, peak, dest, detune) {
+      const o = ac.createOscillator(); o.type = type; o.frequency.value = freq; if (detune) o.detune.value = detune;
+      envTo(o, t, a, d, peak, dest); o.start(t); o.stop(t + a + d + 0.05); return o;
+    }
+    const pluckCache = {};
+    function pluck(m, t, peak) {
+      if (!pluckCache[m]) {
+        const sr = ac.sampleRate, len = Math.floor(sr * 1.6), buf = ac.createBuffer(1, len, sr), d = buf.getChannelData(0), p = Math.max(2, Math.round(sr / f(m)));
+        for (let i = 0; i < p; i++) d[i] = Math.random() * 2 - 1;
+        for (let i = p; i < len; i++) d[i] = (d[i - p] + d[i - p + 1]) * 0.498;
+        pluckCache[m] = buf;
+      }
+      const s = ac.createBufferSource(); s.buffer = pluckCache[m]; envTo(s, t, 0.002, 1.5, peak); s.start(t);
+    }
+    let noiseBuf = null;
+    function noise(t, d, peak, type, freq, q) {
+      if (!noiseBuf) { const len = ac.sampleRate * 2; noiseBuf = ac.createBuffer(1, len, ac.sampleRate); const x = noiseBuf.getChannelData(0); for (let i = 0; i < len; i++) x[i] = Math.random() * 2 - 1; }
+      const s = ac.createBufferSource(); s.buffer = noiseBuf; const fl = ac.createBiquadFilter(); fl.type = type; fl.frequency.value = freq; if (q) fl.Q.value = q;
+      s.connect(fl); envTo(fl, t, 0.001, d, peak); s.start(t, Math.random()); s.stop(t + d + 0.05);
+    }
+    function kick(t, peak) { const o = ac.createOscillator(); o.frequency.setValueAtTime(160, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); envTo(o, t, 0.001, 0.28, peak); o.start(t); o.stop(t + 0.32); noise(t, 0.02, peak * 0.4, 'highpass', 3000); }
+    const snare = (t, peak) => { noise(t, 0.2, peak, 'bandpass', 1800, 0.7); osc('triangle', 190, t, 0.001, 0.08, peak * 0.5); };
+    const hat = (t, peak, open) => noise(t, open ? 0.25 : 0.035, peak, 'highpass', 7500);
+    const crash = (t, peak) => noise(t, 1.6, peak, 'highpass', 4500);
+    const clap = (t, peak) => { [0, 0.012, 0.024].forEach(o => noise(t + o, 0.08, peak, 'bandpass', 1500, 1.2)); };
+    function guitarChain() {
+      if (dist) return dist;
+      const pre = ac.createGain(); pre.gain.value = 3;
+      const ws = ac.createWaveShaper(); const c = new Float32Array(2048);
+      for (let i = 0; i < 2048; i++) { const x = i / 1024 - 1; c[i] = Math.sign(x) * (1 - Math.exp(-Math.abs(x) * 14)); }
+      ws.curve = c; ws.oversample = '4x';
+      const mid = ac.createBiquadFilter(); mid.type = 'peaking'; mid.frequency.value = 900; mid.gain.value = -5; mid.Q.value = 0.8;
+      const pres = ac.createBiquadFilter(); pres.type = 'peaking'; pres.frequency.value = 2600; pres.gain.value = 4;
+      const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 5200;
+      const out = ac.createGain(); out.gain.value = 0.32;
+      pre.connect(ws); ws.connect(mid); mid.connect(pres); pres.connect(lp); lp.connect(out); out.connect(comp);
+      dist = pre; return dist;
+    }
+    function powerChord(root, t, len, palm, peak) {
+      const d = guitarChain();
+      const notes = palm ? [root, root + 7] : [root, root + 7, root + 12];
+      notes.forEach(m => [-9, 8].forEach(dt => {
+        const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f(m); o.detune.value = dt;
+        const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(peak, t + 0.004);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+        if (palm) { const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; o.connect(lp); lp.connect(g); } else o.connect(g);
+        g.connect(d); o.start(t); o.stop(t + len + 0.05);
+      }));
+    }
+    function leadGuitar(m, t, len) {
+      const d = guitarChain();
+      const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f(m);
+      const vib = ac.createOscillator(); vib.frequency.value = 6; const vg = ac.createGain(); vg.gain.value = 9; vib.connect(vg); vg.connect(o.detune);
+      const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.16, t + 0.01); g.gain.setValueAtTime(0.16, t + len * 0.8); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+      o.connect(g); g.connect(d); o.start(t); vib.start(t); o.stop(t + len + 0.05); vib.stop(t + len + 0.05);
+    }
+
+    function schedStep(t, s) {
+      if (genre === 'koledy') { schedKoleda(t, s); return; }
+      const S = SONGS[genre], q = 60 / S.bpm / 4;
+      const barAbs = Math.floor(s / 16) % 16, sec = Math.floor(barAbs / 4), barInSec = barAbs % 4, k = s % 16;
+      const chord = S.sec[sec][barInSec];
+      const lastBar = barInSec === 3;
+      const mel = melodies[genre][barAbs][k];
+
+      if (genre === 'rock') {
+        const root = chord;
+        const chorus = sec === 2, bridge = sec === 3;
+        if (chorus) { if (k === 0 || k === 8) powerChord(root, t, q * 7.5, false, 0.2); }
+        else if (k % 2 === 0) powerChord(root, t, q * 1.3, true, 0.22);                     // palm-muted 8th chugs
+        if (k === 0 && barInSec === 0) crash(t, 0.35);
+        // drums
+        if (chorus || bridge) { if (k % 2 === 0) kick(t, 0.9); }                            // double kick in 8ths
+        else if ([0, 3, 8, 10].includes(k)) kick(t, 0.95);
+        if (k === 4 || k === 12) snare(t, 0.75);
+        if (lastBar && k >= 12) snare(t, 0.45 + (k - 12) * 0.08);                            // fill
+        if (!lastBar || k < 12) hat(t, k % 4 === 0 ? 0.16 : 0.09, chorus && k % 4 === 2);
+        if (chorus && k % 4 === 0 && k) crash(t, 0.08);
+        // lead guitar in chorus and bridge
+        if ((chorus || bridge) && mel) leadGuitar(mel + 12, t, q * 2.2);
+        // bass
+        if (k % 2 === 0) osc('sawtooth', f(root - 12), t, 0.004, q * 1.6, 0.16);
+        return;
+      }
+      const tri = TRI[chord];
+      if (genre === 'kytara') {
+        const pattern = sec === 2 ? [0, 2, 4, 6, 7, 8, 10, 12, 14, 15] : [0, 4, 6, 8, 10, 12, 14];
+        if (pattern.includes(k)) {
+          const up = [6, 10, 14, 15, 2, 7].includes(k);
+          const notes = tri.concat(tri[0] + 12, tri[1] + 12);
+          (up ? notes.slice().reverse() : notes).forEach((m, i) => pluck(m, t + i * 0.011, up ? 0.12 : 0.17));
+        }
+        if (k === 0) pluck(tri[0] - 12, t, 0.45);
+        if (k === 8) pluck(tri[2] - 12, t, 0.38);
+        if (lastBar && k === 12) pluck(tri[0] - 10, t, 0.35);                               // walking bass step
+        if (k % 4 === 2) noise(t, 0.05, 0.06, 'highpass', 6000);                             // shaker
+        if (sec >= 1 && mel) osc('triangle', f(mel), t, 0.02, q * 2.4, 0.11);                // whistled tune
+        return;
+      }
+      if (genre === 'pop') {
+        if (k === 0) tri.forEach(m => [-6, 6].forEach(dt => osc('sawtooth', f(m), t, 0.08, q * 15, 0.03, null, dt)));
+        if (k % 2 === 0) osc('square', f(tri[(k / 2) % 3] + 12), t, 0.003, q * 0.9, 0.035);   // arpeggio
+        if ([0, 3, 6, 8, 11, 14].includes(k)) osc('sawtooth', f(tri[0] - 12), t, 0.005, q * 1.6, 0.14);
+        if (k % 4 === 0) kick(t, 0.9);
+        if (k === 4 || k === 12) clap(t, 0.4);
+        if (k % 2 === 1) hat(t, 0.07);
+        if (k === 0 && barInSec === 0) crash(t, 0.18);
+        if (mel) { osc('square', f(mel), t, 0.01, q * 2.2, 0.06); osc('triangle', f(mel + 12), t, 0.01, q * 2.2, 0.04); }
+        return;
+      }
+      if (genre === 'bit') {
+        const arp = [tri[0], tri[1], tri[2], tri[0] + 12];
+        osc('square', f(arp[k % 4] + 12), t, 0.002, q * 0.8, 0.045);
+        if (k % 2 === 0) osc('triangle', f(tri[0] - 12 + (k % 4 === 2 ? 12 : 0)), t, 0.002, q * 1.5, 0.22);
+        if (k % 4 === 0) noise(t, 0.04, 0.22, 'lowpass', 900);
+        if (k % 8 === 4) noise(t, 0.09, 0.18, 'highpass', 2500);
+        if (mel) osc('square', f(mel), t, 0.002, q * 1.8, 0.07, null, 0);
+      }
+    }
+    function start(g) {
+      if (!ac) return;
+      genre = g; if (SONGS[g] && !melodies[g]) melodies[g] = compose(g);
+      step = 0; nextT = ac.currentTime + 0.08;
+      if (timer) clearInterval(timer);
+      timer = setInterval(() => {
+        const q = genre === 'koledy' ? KOL_Q : 60 / SONGS[genre].bpm / 4;
+        while (nextT < ac.currentTime + 0.2) { schedStep(nextT, step); nextT += q; step++; }
+      }, 25);
+      api.playing = true;
+    }
+    function setMuted(v) { muted.v = v; if (master) master.gain.setTargetAtTime(v ? 0 : 0.7, ac.currentTime, 0.05); }
+    const api = { ensure, start, setMuted, playing: false };
+    return api;
+  })();
+
+
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { resize(); if (built) assemble(); }, 160); });
+  applyPalette(); resize();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { resize(); if (built) assemble(); });
+  requestAnimationFrame(frame);
+})();
+</script>
