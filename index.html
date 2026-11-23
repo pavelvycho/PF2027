@@ -1,0 +1,587 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Tajná zpráva z klubovny</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Special+Elite&family=Bitter:ital,wght@0,500;0,700;1,500&family=Courier+Prime:wght@400;700&display=swap">
+<style>
+/* Layout: a wooden club-room table; the paper message (scratch card) is the hero, the choices sit beside it like a club roster */
+:root {
+  --wood: #2a1e15;          /* table */
+  --wood-2: #3a2a1d;        /* raised wood */
+  --paper: #efe4c9;         /* old paper */
+  --paper-ink: #2b2219;     /* typewriter ink */
+  --paper-muted: #6e5d47;
+  --cream: #f4ead3;         /* text on wood */
+  --cream-muted: #c2ae8e;
+  --accent: #c8641e;        /* set by the chosen colours (default: campfire) */
+  --accent-2: #f0b04a;
+  --f-type: "Special Elite", "Courier New", monospace;
+  --f-head: "Bitter", Georgia, serif;
+  --f-mono: "Courier Prime", "Courier New", monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { background: var(--wood); }
+body {
+  margin: 0; color: var(--cream); font-family: var(--f-head); font-size: 16px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 20px 48px;
+  background-image:
+    repeating-linear-gradient(92deg, rgba(255,255,255,0.025) 0 2px, transparent 2px 9px),
+    repeating-linear-gradient(88deg, rgba(0,0,0,0.12) 0 1px, transparent 1px 23px),
+    radial-gradient(120% 80% at 30% 0%, #3b2a1c 0%, var(--wood) 70%);
+}
+.wrap { max-width: 1100px; margin: 0 auto; display: grid; gap: 22px; }
+header { display: grid; gap: 4px; }
+.eyebrow { margin: 0; font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--cream-muted); }
+h1 { margin: 0; font-size: clamp(26px, 4vw, 40px); line-height: 1.1; font-weight: 700; text-wrap: balance; }
+h1 span { color: var(--accent-2); }
+.lede { margin: 0; color: var(--cream-muted); max-width: 60ch; }
+
+.grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 26px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ---------- the paper ---------- */
+.sheet {
+  position: relative; color: var(--paper-ink);
+  background:
+    radial-gradient(140% 90% at 50% 40%, transparent 55%, rgba(120, 85, 40, 0.28) 100%),
+    var(--paper);
+  border-radius: 3px;
+  box-shadow: 0 18px 40px rgba(0,0,0,0.45), 0 2px 0 rgba(0,0,0,0.2);
+  transform: rotate(-0.6deg);
+  padding: clamp(18px, 3.5vw, 34px);
+  display: grid; gap: 14px;
+  min-width: 0;
+}
+.sheet::before { /* pinned corner tape */
+  content: ""; position: absolute; top: -12px; left: 50%; width: 110px; height: 26px; transform: translateX(-50%) rotate(2deg);
+  background: rgba(240, 225, 180, 0.55); box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+}
+.sheet-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.stamp-top { font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--paper-muted); margin: 0; }
+.emblem { width: 52px; height: 52px; flex: none; color: var(--accent); }
+
+.scratch { position: relative; min-height: 270px; border: 1px dashed rgba(60, 40, 20, 0.35); border-radius: 2px; }
+.reveal { padding: 20px clamp(14px, 3vw, 26px); display: grid; gap: 12px; align-content: center; min-height: 270px; }
+.reveal .hi { margin: 0; font-family: var(--f-type); font-size: clamp(20px, 2.8vw, 26px); color: var(--accent); }
+.reveal .msg { margin: 0; font-family: var(--f-type); font-size: clamp(17px, 2.2vw, 21px); line-height: 1.55; }
+.reveal .pf { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin-top: 4px; }
+.reveal .pf b { font-family: var(--f-head); font-size: clamp(34px, 6vw, 54px); line-height: 1; color: var(--accent); letter-spacing: 0.02em; }
+.reveal .pf span { font-family: var(--f-type); font-size: 18px; }
+.reveal .pf span strong { font-family: var(--f-head); font-weight: 700; letter-spacing: 0.06em; }
+.reveal .drink { width: 72px; height: 72px; color: var(--accent); margin-left: auto; flex: none; transform: rotate(6deg); }
+#scratchCanvas { position: absolute; inset: 0; width: 100%; height: 100%; cursor: crosshair; touch-action: none; border-radius: 2px; }
+.hint { margin: 0; font-family: var(--f-mono); font-size: 13px; color: var(--paper-muted); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.hint .pill { background: var(--accent); color: #fff8ec; border-radius: 3px; padding: 1px 7px; font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; }
+
+.roster { display: flex; flex-wrap: wrap; gap: 6px 8px; padding-top: 6px; border-top: 1px solid rgba(60, 40, 20, 0.2); }
+.roster span {
+  font-family: var(--f-type); font-size: 13px; color: var(--accent);
+  border: 1.5px solid currentColor; border-radius: 3px; padding: 1px 7px;
+  transform: rotate(var(--r, 0deg)); opacity: 0.88;
+}
+.roster span.me { background: var(--accent); color: #fff8ec; border-color: var(--accent); }
+.countdown { margin: 0; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font-family: var(--f-type); font-size: 17px; }
+.countdown b { font-family: var(--f-head); font-size: 34px; line-height: 1; color: var(--accent); font-variant-numeric: tabular-nums; }
+.bonus { margin: 0; font-family: var(--f-mono); font-size: 12px; color: var(--paper-muted); overflow-wrap: anywhere; }
+.bonus b { font-weight: 700; color: var(--paper-ink); letter-spacing: 0.04em; }
+
+/* ---------- the choices ---------- */
+.choices { display: grid; gap: 18px; min-width: 0; }
+fieldset { margin: 0; padding: 0; border: 0; display: grid; gap: 8px; min-width: 0; }
+legend { padding: 0; margin-bottom: 8px; font-family: var(--f-mono); font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--cream-muted); }
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip {
+  font: inherit; font-size: 15px; color: var(--cream);
+  background: var(--wood-2); border: 1px solid rgba(244, 234, 211, 0.18); border-radius: 4px;
+  padding: 6px 12px; cursor: pointer; display: inline-flex; align-items: center; gap: 8px;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+}
+.chip:hover { border-color: rgba(244, 234, 211, 0.45); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: #fff8ec; }
+.chip:focus-visible, .btn:focus-visible, #scratchCanvas:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.sw { width: 14px; height: 14px; border-radius: 50%; display: inline-block; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.25); }
+.chip svg { width: 18px; height: 18px; }
+.small { margin: 0; font-size: 13px; color: var(--cream-muted); }
+.row { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn {
+  font: inherit; font-weight: 700; font-size: 15px; cursor: pointer;
+  color: var(--wood); background: var(--accent-2); border: 0; border-radius: 4px; padding: 10px 16px;
+}
+.btn.ghost { background: transparent; color: var(--cream); border: 1px solid rgba(244, 234, 211, 0.3); font-weight: 500; }
+@media (prefers-reduced-motion: reduce) { .sheet { transform: none; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Klubovna · PF 2027</p>
+    <h1>Tajná zpráva <span>z klubovny</span></h1>
+    <p class="lede" id="lede">V klubovně na tebe čeká zašifrovaný vzkaz. Vyber si, kdo jsi a co si do nového roku přeješ, a pak šifru setři prstem nebo myší.</p>
+  </header>
+
+  <div class="grid">
+    <article class="sheet" aria-live="polite">
+      <div class="sheet-head">
+        <p class="stamp-top" id="stampTop">Přísně tajné · jen pro členy</p>
+        <svg class="emblem" id="emblem" viewBox="0 0 64 64" aria-hidden="true"></svg>
+      </div>
+      <div class="scratch" id="scratch">
+        <div class="reveal" id="reveal">
+          <p class="hi" id="hi"></p>
+          <p class="msg" id="msg"></p>
+          <div class="pf"><b>PF 2027</b><span>přeje <strong>VYCHO</strong> (a určitě celá parta)</span><svg class="drink" id="drinkImg" viewBox="0 0 64 64" aria-hidden="true"></svg></div>
+        </div>
+        <canvas id="scratchCanvas" tabindex="0" aria-label="Šifra Morseovkou. Setři ji tažením prstu nebo myši, klávesou Enter ji odkryješ celou."></canvas>
+      </div>
+      <p class="hint" id="hint"><span class="pill">Morseovka</span> Setři šifru a pod ní se objeví rozluštěný vzkaz.</p>
+      <div class="roster" id="roster" aria-label="Parta"></div>
+      <p class="countdown" id="countdown" hidden></p>
+      <p class="bonus">Pro pozorné: <b id="bonus"></b></p>
+    </article>
+
+    <section class="choices" aria-label="Uprav si vzkaz">
+      <fieldset>
+        <legend>Kdo jsi?</legend>
+        <div class="chips" id="who"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Na čí straně stojíš?</legend>
+        <div class="chips" id="side"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Barvy</legend>
+        <div class="chips" id="colors"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Oblíbený nápoj</legend>
+        <div class="chips" id="drinks"></div>
+      </fieldset>
+      <fieldset>
+        <legend>Hudba ke zprávě</legend>
+        <div class="chips" id="music"></div>
+        <p class="small">Hudba začne hrát, jakmile začneš šifru stírat.</p>
+      </fieldset>
+      <fieldset>
+        <legend>Co si do roku 2027 přeješ? (až tři věci)</legend>
+        <div class="chips" id="wishes"></div>
+      </fieldset>
+      <div class="row">
+        <button class="btn" id="again">Zašifrovat znovu</button>
+        <button class="btn ghost" id="mute" aria-pressed="false">Ztlumit hudbu</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+  // ---------------- data ----------------
+  const TABOR_START = '2027-07-17';   // termín tábora, např. '2027-07-10' (prázdné = počítadlo se neukáže)
+  const PARTA = [
+    ['zapa', 'Zapa', 'Zapo'], ['cerf', 'Čerf', 'Čerfe'], ['filda', 'Filda', 'Fildo'], ['marecek', 'Mareček', 'Marečku'],
+    ['slavo', 'Slavo', 'Slavo'], ['donvildon', 'Don Vildon', 'Done Vildone'], ['tomik', 'Tomík', 'Tomíku'], ['dyck', 'Dyck', 'Dycku'],
+    ['pata', 'Paťa', 'Paťo'], ['axis', 'Axis', 'Axisi'], ['washa', 'Washa', 'Washo'], ['kube', 'Kube', 'Kube'], ['peta', 'Peťa', 'Peťo'], ['guliver', 'Guliver', 'Gulivere']
+  ];
+  PARTA.sort((a, b) => a[1].localeCompare(b[1], 'cs'));   // podle abecedy (české řazení)
+  const SIDES = {
+    sipy: { label: 'Rychlé šípy', icon: 'arrow' },
+    pracka: { label: 'Bratrstvo kočičí pracky', icon: 'paw' }
+  };
+  const COLORS = {
+    tabor: { label: 'Táborák', a: '#c8641e', b: '#f0b04a' },
+    les: { label: 'Les', a: '#3f6b3a', b: '#9cc77a' },
+    noc: { label: 'Noc', a: '#2f4f86', b: '#8fb4e8' },
+    podzim: { label: 'Podzim', a: '#9a3b2a', b: '#e08a5a' }
+  };
+  const MUSIC = { kytara: 'Táborová kytara', rock: 'Rock', pop: 'Pop', bit: '8bit' };
+  const WISHES = {
+    zdravi: ['Zdraví', 'pevné zdraví'],
+    laska: ['Láska', 'spoustu lásky'],
+    pohoda: ['Pohoda', 'klid a pohodu'],
+    dobro: ['Dobrodružství', 'dobrodružství jako z knížky'],
+    stesti: ['Štěstí', 'kus štěstí na každé výpravě'],
+    penize: ['Peníze', 'plnou táborovou kasu'],
+    pratele: ['Přátelé', 'partu, na kterou je spolehnutí']
+  };
+
+  const DS = 'fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"';
+  const DRINKS = {
+    pivo: { label: 'Pivo', line: 'A ať ti u táboráku nikdy nedojde orosený půllitr.',
+      svg: `<g ${DS}><path d="M14 22 h28 v30 a4 4 0 0 1 -4 4 h-20 a4 4 0 0 1 -4 -4 z" fill="currentColor" fill-opacity="0.18"/><path d="M42 27 h5 a5 5 0 0 1 5 5 v9 a5 5 0 0 1 -5 5 h-5"/><path d="M12 22 q-1 -8 7 -8 q3 -6 10 -3 q6 -5 12 1 q7 0 5 10 z" fill="#fff8ec"/><path d="M22 30 v18 M28 30 v18 M34 30 v18"/></g>` },
+    rum: { label: 'Rum', line: 'A na zahřátí ať je vždycky po ruce placatka rumu.',
+      svg: `<g ${DS}><rect x="27" y="4" width="10" height="6" rx="1.5"/><path d="M27 10 h10 v8 q9 4 9 14 v24 a3 3 0 0 1 -3 3 h-22 a3 3 0 0 1 -3 -3 v-24 q0 -10 9 -14 z" fill="currentColor" fill-opacity="0.18"/><rect x="22" y="33" width="20" height="14" rx="1.5" fill="#fff8ec"/><path d="M27 40 h10"/></g>` },
+    whisky: { label: 'Whisky', line: 'A na dobré chvíle sklenka whisky s ledem.',
+      svg: `<g ${DS}><path d="M17 38 h30 l-2 18 h-26 z" fill="currentColor" fill-opacity="0.25" stroke="none"/><path d="M14 20 l4 36 h28 l4 -36"/><rect x="21" y="28" width="10" height="10" rx="1.5" transform="rotate(-12 26 33)" fill="#fff8ec"/><rect x="32" y="30" width="10" height="10" rx="1.5" transform="rotate(10 37 35)" fill="#fff8ec"/></g>` },
+    zelena: { label: 'Zelená', line: 'A na zdraví panáka zelené!',
+      svg: `<g ${DS}><path d="M20.8 30 h22.4 l-2 22 h-18.4 z" fill="#4f9a3a" fill-opacity="0.85" stroke="none"/><path d="M19 20 l4 34 h18 l4 -34"/><path d="M50 12 l2 -5 M54 16 l5 -2 M48 8 l-1 -4"/></g>` },
+    sekt: { label: 'Sekt', line: 'A ať o půlnoci bouchne sekt jako dělo.',
+      svg: `<g ${DS}><path d="M25 6 h14 q2 22 -7 28 q-9 -6 -7 -28 z" fill="currentColor" fill-opacity="0.18"/><path d="M32 34 v18 M24 56 h16"/><circle cx="30" cy="20" r="1.2"/><circle cx="34" cy="14" r="1.2"/><circle cx="33" cy="25" r="1.2"/><path d="M46 10 l4 -4 M48 16 h6 M44 5 v-3"/></g>` },
+    voda: { label: 'Voda (fuj)', line: 'A když už voda, tak aspoň ze studánky. Fuj!',
+      svg: `<g ${DS}><path d="M19.5 28 q4 -3 8 0 t8 0 t8 0 l-2.6 28 h-18.8 z" fill="#8fb4e8" fill-opacity="0.35" stroke="none"/><path d="M18 14 l4 42 h20 l4 -42"/><circle cx="28" cy="39" r="1.4" fill="currentColor"/><circle cx="36" cy="39" r="1.4" fill="currentColor"/><path d="M27 49 q5 -4 10 0"/></g>` }
+  };
+  const state = { who: 'zapa', side: 'sipy', color: 'tabor', music: 'kytara', wishes: ['zdravi', 'pohoda'], drink: 'pivo' };
+  const h = location.hash.replace('#', '').toLowerCase();
+  if (PARTA.some(p => p[0] === h)) state.who = h;
+
+  // ---------------- emblems (own simple marks) ----------------
+  const ICONS = {
+    arrow: '<g fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="32" cy="32" r="28" stroke-width="2.4"/><path d="M15 47 L47 17"/><path d="M36 16 L48 16 L48 28"/><path d="M15 47 l-1 -8 M15 47 l8 1 M20 42 l-1 -8 M20 42 l8 1"/></g>',
+    paw: '<g fill="currentColor"><circle cx="32" cy="32" r="28" fill="none" stroke="currentColor" stroke-width="2.4"/><ellipse cx="32" cy="39" rx="10" ry="8.5"/><ellipse cx="20" cy="29" rx="4.2" ry="5.4" transform="rotate(-20 20 29)"/><ellipse cx="27.5" cy="22" rx="4.2" ry="5.6"/><ellipse cx="36.5" cy="22" rx="4.2" ry="5.6"/><ellipse cx="44" cy="29" rx="4.2" ry="5.4" transform="rotate(20 44 29)"/></g>'
+  };
+
+  // ---------------- Morse ----------------
+  const MORSE = { A: '.-', B: '-...', C: '-.-.', D: '-..', E: '.', F: '..-.', G: '--.', H: '....', I: '..', J: '.---', K: '-.-', L: '.-..', M: '--', N: '-.', O: '---', P: '.--.', Q: '--.-', R: '.-.', S: '...', T: '-', U: '..-', V: '...-', W: '.--', X: '-..-', Y: '-.--', Z: '--..',
+    '0': '-----', '1': '.----', '2': '..---', '3': '...--', '4': '....-', '5': '.....', '6': '-....', '7': '--...', '8': '---..', '9': '----.' };
+  const strip = s => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toUpperCase();
+  const toMorse = s => strip(s).split(' ').map(w => [...w].map(c => MORSE[c] || '').filter(Boolean).join(' ')).filter(Boolean).join(' / ');
+
+  // ---------------- build UI ----------------
+  const $ = id => document.getElementById(id);
+  function chip(group, key, html, pressed) {
+    const b = document.createElement('button');
+    b.className = 'chip'; b.type = 'button'; b.id = `${group}-${key}`;
+    b.dataset.key = key; b.innerHTML = html; b.setAttribute('aria-pressed', String(pressed));
+    return b;
+  }
+  PARTA.forEach(([k, n]) => $('who').append(chip('who', k, n, state.who === k)));
+  Object.entries(SIDES).forEach(([k, v]) => $('side').append(chip('side', k, `<svg viewBox="0 0 64 64" aria-hidden="true">${ICONS[v.icon]}</svg>${v.label}`, state.side === k)));
+  Object.entries(COLORS).forEach(([k, v]) => $('colors').append(chip('col', k, `<span class="sw" style="background:${v.a}"></span>${v.label}`, state.color === k)));
+  Object.entries(MUSIC).forEach(([k, v]) => $('music').append(chip('mus', k, v, state.music === k)));
+  Object.entries(WISHES).forEach(([k, v]) => $('wishes').append(chip('wish', k, v[0], state.wishes.includes(k))));
+  Object.entries(DRINKS).forEach(([k, v]) => $('drinks').append(chip('drink', k, `<svg viewBox="0 0 64 64" aria-hidden="true">${v.svg}</svg>${v.label}`, state.drink === k)));
+
+  function single(groupEl, key, onPick) {
+    groupEl.addEventListener('click', e => {
+      const b = e.target.closest('.chip'); if (!b) return;
+      groupEl.querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c === b)));
+      onPick(b.dataset.key);
+    });
+  }
+  single($('who'), 'who', k => { state.who = k; render(true); });
+  single($('side'), 'side', k => { state.side = k; render(true); });
+  single($('colors'), 'color', k => { state.color = k; render(false); });
+  single($('music'), 'music', k => { state.music = k; if (music.playing) music.start(k); });
+  single($('drinks'), 'drink', k => { state.drink = k; render(true); });
+  $('wishes').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    const k = b.dataset.key; const i = state.wishes.indexOf(k);
+    if (i >= 0) { if (state.wishes.length > 1) state.wishes.splice(i, 1); }
+    else { state.wishes.push(k); if (state.wishes.length > 3) state.wishes.shift(); }
+    $('wishes').querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(state.wishes.includes(c.dataset.key))));
+    render(true);
+  });
+  $('again').addEventListener('click', () => render(true));
+
+  // ---------------- message ----------------
+  function joinCz(list) { return list.length < 2 ? list.join('') : list.slice(0, -1).join(', ') + ' a ' + list[list.length - 1]; }
+  function compose() {
+    const p = PARTA.find(x => x[0] === state.who);
+    const wishes = joinCz(state.wishes.map(k => WISHES[k][1]));
+    const sideLine = state.side === 'sipy'
+      ? 'Ať ti šíp vždycky ukáže správnou cestu.'
+      : 'Ať tě vede pracka a nic tě nezaskočí.';
+    return { name: p[1], voc: p[2], hi: `Ahoj ${p[2]}!`, msg: `Do roku 2027 ti přeju ${wishes}. ${sideLine} ${DRINKS[state.drink].line} Uvidíme se u táboráku!` };
+  }
+
+  // ---------------- scratch layer ----------------
+  const cv = $('scratchCanvas'); const cx = cv.getContext('2d');
+  const box = $('scratch');
+  let revealed = false, scratching = false, strokes = 0;
+  function sizeCanvas() {
+    const r = box.getBoundingClientRect(); const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    cv.width = Math.round(r.width * dpr); cv.height = Math.round(r.height * dpr);
+    cx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    return r;
+  }
+  function paintCipher() {
+    const r = sizeCanvas(); const W = r.width, H = r.height;
+    cx.globalCompositeOperation = 'source-over';
+    // paper with fibres
+    cx.fillStyle = '#e8dcbf'; cx.fillRect(0, 0, W, H);
+    for (let i = 0; i < 900; i++) {
+      cx.fillStyle = `rgba(${90 + Math.random() * 60}, ${65 + Math.random() * 40}, 30, ${Math.random() * 0.07})`;
+      cx.fillRect(Math.random() * W, Math.random() * H, Math.random() * 3 + 0.5, Math.random() * 1.2 + 0.3);
+    }
+    const m = compose();
+    const text = toMorse(`${m.hi} ${m.msg} PF 2027 VYCHO`);
+    const fs = Math.max(15, Math.min(22, W / 30));
+    cx.font = `700 ${fs}px "Courier Prime", "Courier New", monospace`;
+    cx.fillStyle = 'rgba(43, 34, 25, 0.86)';
+    const pad = 18, maxW = W - pad * 2, lh = fs * 1.35;
+    const words = text.split(' '); let line = '', y = pad + fs;
+    for (const w of words) {
+      const test = line ? line + ' ' + w : w;
+      if (cx.measureText(test).width > maxW && line) { cx.fillText(line, pad, y); line = w; y += lh; if (y > H - pad) break; }
+      else line = test;
+    }
+    if (y <= H - pad) cx.fillText(line, pad, y);
+    cx.globalCompositeOperation = 'destination-out';
+    revealed = false; strokes = 0;
+    cv.style.opacity = '1'; cv.style.transition = 'none'; cv.hidden = false;
+  }
+  function scratchAt(x, y) {
+    cx.beginPath(); cx.arc(x, y, 24, 0, Math.PI * 2); cx.fill();
+    if (++strokes % 12 === 0) checkCleared();
+  }
+  let last = null;
+  function pt(e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+  cv.addEventListener('pointerdown', e => { scratching = true; last = pt(e); cv.setPointerCapture(e.pointerId); scratchAt(...last); music.ensure(); });
+  cv.addEventListener('pointermove', e => {
+    if (!scratching) return; const p = pt(e);
+    const dx = p[0] - last[0], dy = p[1] - last[1], n = Math.max(1, Math.hypot(dx, dy) / 8);
+    for (let i = 1; i <= n; i++) scratchAt(last[0] + dx * i / n, last[1] + dy * i / n);
+    last = p;
+  });
+  const stop = () => { scratching = false; };
+  cv.addEventListener('pointerup', stop); cv.addEventListener('pointercancel', stop);
+  cv.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); music.ensure(); finish(); } });
+  function checkCleared() {
+    if (revealed) return;
+    const d = cx.getImageData(0, 0, cv.width, cv.height).data; let clear = 0, tot = 0;
+    for (let i = 3; i < d.length; i += 4 * 37) { tot++; if (d[i] < 30) clear++; }
+    if (clear / tot > 0.9) finish();
+  }
+  function finish() {
+    revealed = true; cv.style.transition = 'opacity 0.8s'; cv.style.opacity = '0';
+    setTimeout(() => { if (revealed) cv.hidden = true; }, 850);
+    $('hint').innerHTML = '<span class="pill">Rozluštěno</span> Šťastný nový rok! Klikni na „Zašifrovat znovu“ a zkus jiné přání.';
+  }
+
+  // ---------------- render ----------------
+  function render(reencrypt) {
+    const c = COLORS[state.color];
+    document.documentElement.style.setProperty('--accent', c.a);
+    document.documentElement.style.setProperty('--accent-2', c.b);
+    $('emblem').innerHTML = ICONS[SIDES[state.side].icon];
+    const m = compose();
+    $('hi').textContent = m.hi; $('msg').textContent = m.msg;
+    $('drinkImg').innerHTML = DRINKS[state.drink].svg;
+    $('stampTop').textContent = `Přísně tajné · jen pro: ${m.name}`;
+    $('roster').innerHTML = PARTA.map(([k, n], i) => `<span class="${k === state.who ? 'me' : ''}" style="--r:${((i * 37) % 7) - 3}deg">${n}</span>`).join('');
+    $('bonus').textContent = toMorse('Tabor 2027 se blizi');
+    if (TABOR_START) {
+      const d0 = new Date(TABOR_START + 'T00:00:00'); const now = new Date(); now.setHours(0, 0, 0, 0);
+      const days = Math.round((d0 - now) / 86400000);
+      const el = $('countdown'); el.hidden = false;
+      const word = n => n === 1 ? 'den' : (n >= 2 && n <= 4 ? 'dny' : 'dní');
+      el.innerHTML = days > 0 ? `Do tábora zbývá <b>${days}</b> ${word(days)}` : (days === 0 ? '<b>Dnes</b> odjíždíme na tábor!' : 'Tábor 2027 už běží nebo proběhl. Ahoj u dalšího!');
+    }
+    if (reencrypt) {
+      paintCipher();
+      $('hint').innerHTML = '<span class="pill">Morseovka</span> Setři šifru a pod ní se objeví rozluštěný vzkaz.';
+    }
+  }
+
+  // ---------------- music (generated in the browser) ----------------
+  // Each style is a 16-bar song in 4 sections (verse, verse 2, chorus, bridge) with its own melody,
+  // so nothing repeats until the whole song loops (roughly 25–40 s).
+  const music = (() => {
+    let ac = null, master = null, comp = null, timer = null, genre = null, nextT = 0, step = 0, dist = null, leadDist = null;
+    const muted = { v: false };
+    const f = m => 440 * Math.pow(2, (m - 69) / 12);
+    const TRI = { G: [55, 59, 62], D: [50, 54, 57], Em: [52, 55, 59], C: [48, 52, 55], Am: [57, 60, 64], Bm: [47, 50, 54], A: [45, 49, 52], F: [53, 57, 60], Dm: [50, 53, 57], E: [52, 56, 59], Bb: [46, 50, 53] };
+    const SONGS = {
+      kytara: { bpm: 108, sec: [['G', 'D', 'Em', 'C'], ['G', 'C', 'D', 'G'], ['Em', 'C', 'G', 'D'], ['C', 'D', 'G', 'G']],
+                scale: [67, 69, 71, 74, 76, 79], seed: 11 },
+      pop:    { bpm: 118, sec: [['G', 'D', 'Em', 'C'], ['Em', 'C', 'G', 'D'], ['C', 'D', 'Bm', 'Em'], ['C', 'D', 'G', 'G']],
+                scale: [67, 69, 71, 74, 76, 79, 81], seed: 23 },
+      bit:    { bpm: 152, sec: [['C', 'Am', 'F', 'G'], ['C', 'Am', 'Dm', 'G'], ['F', 'G', 'Em', 'Am'], ['F', 'G', 'C', 'C']],
+                scale: [72, 74, 76, 79, 81, 84, 86], seed: 37 },
+      // rock: power chords, root notes in MIDI (E2 = 40)
+      rock:   { bpm: 156, sec: [[40, 40, 48, 50], [40, 40, 43, 45], [48, 50, 40, 40], [45, 48, 50, 47]],
+                scale: [64, 67, 69, 71, 74, 76, 79], seed: 5 }
+    };
+    // deterministic "composer": a seeded melody per song, different in every bar
+    function rng(seed) { let a = seed >>> 0; return () => { a = (a + 0x6D2B79F5) >>> 0; let t = a; t = Math.imul(t ^ t >>> 15, t | 1); t ^= t + Math.imul(t ^ t >>> 7, t | 61); return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+    const RHYTHMS = [
+      [1,0,0,0, 1,0,1,0, 1,0,0,0, 1,0,0,0], [1,0,1,0, 1,0,0,1, 0,0,1,0, 1,0,0,0],
+      [1,0,0,1, 0,0,1,0, 1,0,1,0, 0,0,0,0], [1,0,1,1, 1,0,1,0, 1,1,1,0, 1,0,0,0],
+      [0,0,1,0, 1,0,1,0, 0,0,1,0, 1,0,1,0], [1,0,0,0, 0,0,0,0, 1,0,1,0, 1,0,0,0]
+    ];
+    const melodies = {};
+    function compose(g) {
+      const S = SONGS[g], r = rng(S.seed), out = [];
+      let idx = 2;
+      for (let s = 0; s < 4; s++) {
+        const motif = [RHYTHMS[Math.floor(r() * RHYTHMS.length)], RHYTHMS[Math.floor(r() * RHYTHMS.length)]];
+        for (let b = 0; b < 4; b++) {
+          const rhythm = b === 3 ? RHYTHMS[5] : motif[b % 2];
+          const bar = [];
+          for (let k = 0; k < 16; k++) {
+            if (!rhythm[k]) { bar.push(null); continue; }
+            idx = Math.max(0, Math.min(S.scale.length - 1, idx + [-2, -1, -1, 0, 1, 1, 2][Math.floor(r() * 7)]));
+            if (b === 3 && k === 8) idx = 0;                         // land on the tonic at section ends
+            bar.push(S.scale[idx] + (s === 2 ? 12 : 0) * (g === 'pop' ? 1 : 0));
+          }
+          out.push(bar);
+        }
+      }
+      return out;
+    }
+
+    function ensure() {
+      if (!ac) {
+        const AC = window.AudioContext || window.webkitAudioContext; if (!AC) return;
+        ac = new AC();
+        comp = ac.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 4;
+        master = ac.createGain(); master.gain.value = muted.v ? 0 : 0.7;
+        comp.connect(master); master.connect(ac.destination);
+      }
+      if (ac.state === 'suspended') ac.resume();
+      if (!timer) start(state.music);
+    }
+    function envTo(node, t, a, d, peak, dest) {
+      const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + d);
+      node.connect(g); g.connect(dest || comp); return g;
+    }
+    function osc(type, freq, t, a, d, peak, dest, detune) {
+      const o = ac.createOscillator(); o.type = type; o.frequency.value = freq; if (detune) o.detune.value = detune;
+      envTo(o, t, a, d, peak, dest); o.start(t); o.stop(t + a + d + 0.05); return o;
+    }
+    const pluckCache = {};
+    function pluck(m, t, peak) {
+      if (!pluckCache[m]) {
+        const sr = ac.sampleRate, len = Math.floor(sr * 1.6), buf = ac.createBuffer(1, len, sr), d = buf.getChannelData(0), p = Math.max(2, Math.round(sr / f(m)));
+        for (let i = 0; i < p; i++) d[i] = Math.random() * 2 - 1;
+        for (let i = p; i < len; i++) d[i] = (d[i - p] + d[i - p + 1]) * 0.498;
+        pluckCache[m] = buf;
+      }
+      const s = ac.createBufferSource(); s.buffer = pluckCache[m]; envTo(s, t, 0.002, 1.5, peak); s.start(t);
+    }
+    let noiseBuf = null;
+    function noise(t, d, peak, type, freq, q) {
+      if (!noiseBuf) { const len = ac.sampleRate * 2; noiseBuf = ac.createBuffer(1, len, ac.sampleRate); const x = noiseBuf.getChannelData(0); for (let i = 0; i < len; i++) x[i] = Math.random() * 2 - 1; }
+      const s = ac.createBufferSource(); s.buffer = noiseBuf; const fl = ac.createBiquadFilter(); fl.type = type; fl.frequency.value = freq; if (q) fl.Q.value = q;
+      s.connect(fl); envTo(fl, t, 0.001, d, peak); s.start(t, Math.random()); s.stop(t + d + 0.05);
+    }
+    function kick(t, peak) { const o = ac.createOscillator(); o.frequency.setValueAtTime(160, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.12); envTo(o, t, 0.001, 0.28, peak); o.start(t); o.stop(t + 0.32); noise(t, 0.02, peak * 0.4, 'highpass', 3000); }
+    const snare = (t, peak) => { noise(t, 0.2, peak, 'bandpass', 1800, 0.7); osc('triangle', 190, t, 0.001, 0.08, peak * 0.5); };
+    const hat = (t, peak, open) => noise(t, open ? 0.25 : 0.035, peak, 'highpass', 7500);
+    const crash = (t, peak) => noise(t, 1.6, peak, 'highpass', 4500);
+    const clap = (t, peak) => { [0, 0.012, 0.024].forEach(o => noise(t + o, 0.08, peak, 'bandpass', 1500, 1.2)); };
+    function guitarChain() {
+      if (dist) return dist;
+      const pre = ac.createGain(); pre.gain.value = 3;
+      const ws = ac.createWaveShaper(); const c = new Float32Array(2048);
+      for (let i = 0; i < 2048; i++) { const x = i / 1024 - 1; c[i] = Math.sign(x) * (1 - Math.exp(-Math.abs(x) * 14)); }
+      ws.curve = c; ws.oversample = '4x';
+      const mid = ac.createBiquadFilter(); mid.type = 'peaking'; mid.frequency.value = 900; mid.gain.value = -5; mid.Q.value = 0.8;
+      const pres = ac.createBiquadFilter(); pres.type = 'peaking'; pres.frequency.value = 2600; pres.gain.value = 4;
+      const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 5200;
+      const out = ac.createGain(); out.gain.value = 0.32;
+      pre.connect(ws); ws.connect(mid); mid.connect(pres); pres.connect(lp); lp.connect(out); out.connect(comp);
+      dist = pre; return dist;
+    }
+    function powerChord(root, t, len, palm, peak) {
+      const d = guitarChain();
+      const notes = palm ? [root, root + 7] : [root, root + 7, root + 12];
+      notes.forEach(m => [-9, 8].forEach(dt => {
+        const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f(m); o.detune.value = dt;
+        const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(peak, t + 0.004);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+        if (palm) { const lp = ac.createBiquadFilter(); lp.type = 'lowpass'; lp.frequency.value = 900; o.connect(lp); lp.connect(g); } else o.connect(g);
+        g.connect(d); o.start(t); o.stop(t + len + 0.05);
+      }));
+    }
+    function leadGuitar(m, t, len) {
+      const d = guitarChain();
+      const o = ac.createOscillator(); o.type = 'sawtooth'; o.frequency.value = f(m);
+      const vib = ac.createOscillator(); vib.frequency.value = 6; const vg = ac.createGain(); vg.gain.value = 9; vib.connect(vg); vg.connect(o.detune);
+      const g = ac.createGain(); g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(0.16, t + 0.01); g.gain.setValueAtTime(0.16, t + len * 0.8); g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+      o.connect(g); g.connect(d); o.start(t); vib.start(t); o.stop(t + len + 0.05); vib.stop(t + len + 0.05);
+    }
+
+    function schedStep(t, s) {
+      const S = SONGS[genre], q = 60 / S.bpm / 4;
+      const barAbs = Math.floor(s / 16) % 16, sec = Math.floor(barAbs / 4), barInSec = barAbs % 4, k = s % 16;
+      const chord = S.sec[sec][barInSec];
+      const lastBar = barInSec === 3;
+      const mel = melodies[genre][barAbs][k];
+
+      if (genre === 'rock') {
+        const root = chord;
+        const chorus = sec === 2, bridge = sec === 3;
+        if (chorus) { if (k === 0 || k === 8) powerChord(root, t, q * 7.5, false, 0.2); }
+        else if (k % 2 === 0) powerChord(root, t, q * 1.3, true, 0.22);                     // palm-muted 8th chugs
+        if (k === 0 && barInSec === 0) crash(t, 0.35);
+        // drums
+        if (chorus || bridge) { if (k % 2 === 0) kick(t, 0.9); }                            // double kick in 8ths
+        else if ([0, 3, 8, 10].includes(k)) kick(t, 0.95);
+        if (k === 4 || k === 12) snare(t, 0.75);
+        if (lastBar && k >= 12) snare(t, 0.45 + (k - 12) * 0.08);                            // fill
+        if (!lastBar || k < 12) hat(t, k % 4 === 0 ? 0.16 : 0.09, chorus && k % 4 === 2);
+        if (chorus && k % 4 === 0 && k) crash(t, 0.08);
+        // lead guitar in chorus and bridge
+        if ((chorus || bridge) && mel) leadGuitar(mel + 12, t, q * 2.2);
+        // bass
+        if (k % 2 === 0) osc('sawtooth', f(root - 12), t, 0.004, q * 1.6, 0.16);
+        return;
+      }
+      const tri = TRI[chord];
+      if (genre === 'kytara') {
+        const pattern = sec === 2 ? [0, 2, 4, 6, 7, 8, 10, 12, 14, 15] : [0, 4, 6, 8, 10, 12, 14];
+        if (pattern.includes(k)) {
+          const up = [6, 10, 14, 15, 2, 7].includes(k);
+          const notes = tri.concat(tri[0] + 12, tri[1] + 12);
+          (up ? notes.slice().reverse() : notes).forEach((m, i) => pluck(m, t + i * 0.011, up ? 0.12 : 0.17));
+        }
+        if (k === 0) pluck(tri[0] - 12, t, 0.45);
+        if (k === 8) pluck(tri[2] - 12, t, 0.38);
+        if (lastBar && k === 12) pluck(tri[0] - 10, t, 0.35);                               // walking bass step
+        if (k % 4 === 2) noise(t, 0.05, 0.06, 'highpass', 6000);                             // shaker
+        if (sec >= 1 && mel) osc('triangle', f(mel), t, 0.02, q * 2.4, 0.11);                // whistled tune
+        return;
+      }
+      if (genre === 'pop') {
+        if (k === 0) tri.forEach(m => [-6, 6].forEach(dt => osc('sawtooth', f(m), t, 0.08, q * 15, 0.03, null, dt)));
+        if (k % 2 === 0) osc('square', f(tri[(k / 2) % 3] + 12), t, 0.003, q * 0.9, 0.035);   // arpeggio
+        if ([0, 3, 6, 8, 11, 14].includes(k)) osc('sawtooth', f(tri[0] - 12), t, 0.005, q * 1.6, 0.14);
+        if (k % 4 === 0) kick(t, 0.9);
+        if (k === 4 || k === 12) clap(t, 0.4);
+        if (k % 2 === 1) hat(t, 0.07);
+        if (k === 0 && barInSec === 0) crash(t, 0.18);
+        if (mel) { osc('square', f(mel), t, 0.01, q * 2.2, 0.06); osc('triangle', f(mel + 12), t, 0.01, q * 2.2, 0.04); }
+        return;
+      }
+      if (genre === 'bit') {
+        const arp = [tri[0], tri[1], tri[2], tri[0] + 12];
+        osc('square', f(arp[k % 4] + 12), t, 0.002, q * 0.8, 0.045);
+        if (k % 2 === 0) osc('triangle', f(tri[0] - 12 + (k % 4 === 2 ? 12 : 0)), t, 0.002, q * 1.5, 0.22);
+        if (k % 4 === 0) noise(t, 0.04, 0.22, 'lowpass', 900);
+        if (k % 8 === 4) noise(t, 0.09, 0.18, 'highpass', 2500);
+        if (mel) osc('square', f(mel), t, 0.002, q * 1.8, 0.07, null, 0);
+      }
+    }
+    function start(g) {
+      if (!ac) return;
+      genre = g; if (!melodies[g]) melodies[g] = compose(g);
+      step = 0; nextT = ac.currentTime + 0.08;
+      if (timer) clearInterval(timer);
+      timer = setInterval(() => {
+        const q = 60 / SONGS[genre].bpm / 4;
+        while (nextT < ac.currentTime + 0.2) { schedStep(nextT, step); nextT += q; step++; }
+      }, 25);
+      api.playing = true;
+    }
+    function setMuted(v) { muted.v = v; if (master) master.gain.setTargetAtTime(v ? 0 : 0.7, ac.currentTime, 0.05); }
+    const api = { ensure, start, setMuted, playing: false };
+    return api;
+  })();
+  $('mute').addEventListener('click', e => {
+    const b = e.currentTarget; const on = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', String(on)); b.textContent = on ? 'Zapnout hudbu' : 'Ztlumit hudbu'; music.setMuted(on);
+  });
+
+  window.addEventListener('hashchange', () => {
+    const k = location.hash.replace('#', '').toLowerCase();
+    if (PARTA.some(p => p[0] === k)) { state.who = k; $('who').querySelectorAll('.chip').forEach(c => c.setAttribute('aria-pressed', String(c.dataset.key === k))); render(true); }
+  });
+  let rt; window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { if (!revealed) paintCipher(); }, 150); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { if (!revealed) paintCipher(); });
+  render(true);
+})();
+</script>
+
+</body></html>
